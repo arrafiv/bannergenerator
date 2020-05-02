@@ -49,32 +49,44 @@ func main() {
 	labels := []m.Label{
 		m.Label{
 			FontPath: "../../golang/freetype/testdata/",
-			FontSize: 48,
+			Size:     48,
 			FontType: "BebasNeue-Regular.ttf",
+			Color:    image.Black,
+			DPI:      72,
+			Spacing:  1.5,
 			Text:     "Tumbuhan &",
 			XPos:     10,
 			YPos:     0,
 		},
 		m.Label{
 			FontPath: "../../golang/freetype/testdata/",
-			FontSize: 48,
+			Size:     48,
 			FontType: "BebasNeue-Regular.ttf",
+			Color:    image.Black,
+			DPI:      72,
+			Spacing:  1.5,
 			Text:     "Tanaman",
 			XPos:     10,
 			YPos:     50,
 		},
 		m.Label{
 			FontPath: "../../golang/freetype/testdata/",
-			FontSize: 32,
+			Size:     32,
 			FontType: "BebasNeue-Light.ttf",
+			Color:    image.Black,
+			DPI:      72,
+			Spacing:  1.5,
 			Text:     "di bawah",
 			XPos:     10,
 			YPos:     290,
 		},
 		m.Label{
 			FontPath: "../../golang/freetype/testdata/",
-			FontSize: 48,
+			Size:     48,
 			FontType: "BebasNeue-Bold.ttf",
+			Color:    image.Black,
+			DPI:      72,
+			Spacing:  1.5,
 			Text:     "Rp 90rb",
 			XPos:     10,
 			YPos:     320,
@@ -86,7 +98,7 @@ func main() {
 		log.Printf("Error generating banner: %+v\n", err)
 	}
 
-	out, err := os.Create("./output.jpg")
+	out, err := os.Create("./sample-output.jpg")
 	if err != nil {
 		log.Printf("Error creating image file: %+v\n", err)
 		return
@@ -101,7 +113,7 @@ func main() {
 		return
 	}
 
-	log.Println("Image Generated")
+	log.Println("Banner Generated")
 }
 
 func downloadMainImage(url string) (image.Image, error) {

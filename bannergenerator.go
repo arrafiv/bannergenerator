@@ -23,7 +23,10 @@ type (
 		Text     string
 		FontPath string
 		FontType string
-		FontSize float64
+		Size     float64
+		Color    image.Image
+		DPI      float64
+		Spacing  float64
 		XPos     int
 		YPos     int
 	}
@@ -41,9 +44,10 @@ func GenerateBanner(imgs []ImageLayer, labels []Label, bgProperty BgProperty) (*
 	//create image's background
 	bgImg := image.NewRGBA(image.Rect(0, 0, bgProperty.Width, bgProperty.Length))
 
-	//set the color to white
+	//set the background color
 	draw.Draw(bgImg, bgImg.Bounds(), &image.Uniform{bgProperty.BgColor}, image.ZP, draw.Src)
 
+	//looping image layer, higher array index = upper layer
 	for _, img := range imgs {
 		//set image offset
 		offset := image.Pt(img.XPos, img.YPos)
@@ -62,8 +66,11 @@ func GenerateBanner(imgs []ImageLayer, labels []Label, bgProperty BgProperty) (*
 }
 
 func addLabel(img *image.RGBA, labels []Label) (*image.RGBA, error) {
+	//initialize the context
+	c := freetype.NewContext()
+
 	for _, label := range labels {
-		// Read font data
+		//read font data
 		fontBytes, err := ioutil.ReadFile(label.FontPath + label.FontType)
 		if err != nil {
 			return nil, err
@@ -73,23 +80,24 @@ func addLabel(img *image.RGBA, labels []Label) (*image.RGBA, error) {
 			return nil, err
 		}
 
-		// Initialize the context
-		c := freetype.NewContext()
-		c.SetDPI(72)
+		//set label configuration
+		c.SetDPI(label.DPI)
 		c.SetFont(f)
-		c.SetFontSize(label.FontSize)
+		c.SetFontSize(label.Size)
 		c.SetClip(img.Bounds())
 		c.SetDst(img)
-		c.SetSrc(image.Black)
+		c.SetSrc(label.Color)
 
-		pt := freetype.Pt(label.XPos, label.YPos+int(c.PointToFixed(label.FontSize)>>6))
+		//positioning the label
+		pt := freetype.Pt(label.XPos, label.YPos+int(c.PointToFixed(label.Size)>>6))
 
+		//draw the label on image
 		_, err = c.DrawString(label.Text, pt)
 		if err != nil {
 			log.Println(err)
 			return img, nil
 		}
-		pt.Y += c.PointToFixed(label.FontSize * 1.5)
+		pt.Y += c.PointToFixed(label.Size * label.Spacing)
 	}
 
 	return img, nil
